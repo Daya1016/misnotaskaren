@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solucionador de Ecuación Cuadrática</title>
+    <title>Calculadora de Notas - Predicción del 4° Parcial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -22,7 +22,7 @@
 
         /* Menú lateral */
         .sidebar {
-            width: 250px;
+            width: 280px;
             background: linear-gradient(180deg, #2c3e50, #1a1a2e);
             color: white;
             padding: 25px 15px;
@@ -30,6 +30,7 @@
             flex-direction: column;
             box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
             z-index: 10;
+            transition: width 0.3s ease;
         }
 
         .logo {
@@ -111,6 +112,7 @@
         .header p {
             color: #7f8c8d;
             font-size: 1.1rem;
+            line-height: 1.6;
         }
 
         /* Panel de entrada */
@@ -135,26 +137,26 @@
             margin-right: 10px;
         }
 
-        .coeff-inputs {
-            display: flex;
-            flex-wrap: wrap;
+        .grades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 25px;
         }
 
-        .input-group {
-            flex: 1;
-            min-width: 200px;
+        .grade-input-group {
+            display: flex;
+            flex-direction: column;
         }
 
-        .input-group label {
+        .grade-input-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #2c3e50;
         }
 
-        .input-group input {
+        .grade-input-group input {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e1e5eb;
@@ -163,16 +165,98 @@
             transition: all 0.3s ease;
         }
 
-        .input-group input:focus {
+        .grade-input-group input:focus {
             border-color: #3498db;
             outline: none;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .highlighted {
+            border-color: #e74c3c !important;
+            background-color: rgba(231, 76, 60, 0.05) !important;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        .grade-input-group .percentage {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .grade-input-group .percentage i {
+            margin-right: 5px;
+            color: #3498db;
+        }
+
+        .grade-to-predict {
+            border-left: 5px solid #e74c3c;
+            padding-left: 15px;
+            margin-top: 10px;
+        }
+
+        .grade-to-predict h4 {
+            color: #e74c3c;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .grade-to-predict p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .target-grade-selector {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #9b59b6;
+        }
+
+        .target-grade-selector label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-right: 15px;
+        }
+
+        .grade-option {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .grade-option:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .grade-option input {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .grade-option span {
+            font-weight: 500;
         }
 
         .button-container {
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
+            margin-top: 25px;
         }
 
         .btn {
@@ -224,64 +308,6 @@
             margin-right: 8px;
         }
 
-        /* Control de decimales */
-        .decimal-control {
-            display: flex;
-            align-items: center;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 10px 15px;
-            margin-top: 20px;
-            border: 1px solid #e1e5eb;
-        }
-
-        .decimal-control label {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-right: 15px;
-        }
-
-        .decimal-buttons {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .decimal-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .decimal-btn:hover {
-            background-color: #2980b9;
-            transform: scale(1.1);
-        }
-
-        .decimal-btn:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .decimal-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            min-width: 30px;
-            text-align: center;
-        }
-
         /* Panel de resultados */
         .results-panel {
             background-color: white;
@@ -291,7 +317,7 @@
             margin-bottom: 30px;
         }
 
-        .equation-display {
+        .calculation-steps {
             background-color: #f8f9fa;
             border-radius: 10px;
             padding: 20px;
@@ -299,290 +325,153 @@
             border-left: 5px solid #3498db;
         }
 
-        .equation-display h4 {
+        .calculation-steps h4 {
             color: #2c3e50;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
         }
 
-        .equation {
-            font-size: 1.8rem;
+        .step {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .step:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .step-equation {
+            font-family: 'Courier New', monospace;
+            background-color: #eef2f7;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            overflow-x: auto;
+        }
+
+        .result-box {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
             text-align: center;
+            border-top: 5px solid #2ecc71;
+        }
+
+        .result-box h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .result-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #2ecc71;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .result-message {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .result-details {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .detail-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            min-width: 150px;
+        }
+
+        .detail-item h5 {
+            color: #7f8c8d;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .detail-item p {
             color: #2c3e50;
             font-weight: 600;
-            padding: 10px;
+            font-size: 1.2rem;
         }
 
-        .discriminant {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .discriminant h4 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-
-        .discriminant-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            padding: 10px 20px;
+        .warning-box {
+            background-color: rgba(241, 196, 15, 0.1);
+            border-left: 5px solid #f39c12;
+            padding: 15px;
             border-radius: 8px;
-            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .warning-box h4 {
+            color: #d35400;
             margin-bottom: 10px;
-        }
-
-        .discriminant-positive {
-            background-color: rgba(46, 204, 113, 0.2);
-            color: #27ae60;
-        }
-
-        .discriminant-zero {
-            background-color: rgba(241, 196, 15, 0.2);
-            color: #f39c12;
-        }
-
-        .discriminant-negative {
-            background-color: rgba(231, 76, 60, 0.2);
-            color: #e74c3c;
-        }
-
-        .solutions-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .solution {
-            flex: 1;
-            min-width: 250px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .solution h4 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-
-        .solution-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #3498db;
-            margin-bottom: 10px;
-            min-height: 50px;
             display: flex;
             align-items: center;
-            justify-content: center;
         }
 
-        .solution-info {
-            font-size: 0.9rem;
+        .warning-box h4 i {
+            margin-right: 10px;
+        }
+
+        .warning-box p {
             color: #7f8c8d;
-            margin-top: 10px;
         }
 
-        .complex-solution {
-            flex: 1;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .complex-solution h3 {
-            color: #e74c3c;
-            margin-bottom: 15px;
-        }
-
-        .complex-solution p {
-            font-size: 1.2rem;
-            color: #2c3e50;
-        }
-
-        /* Panel de gráfico */
-        .graph-panel {
+        /* Panel de información */
+        .info-panel {
             background-color: white;
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
-        .graph-container {
-            height: 350px;
-            position: relative;
-            margin-top: 20px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .graph-placeholder {
-            text-align: center;
-            color: #7f8c8d;
-        }
-
-        .graph-placeholder i {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            color: #bdc3c7;
-        }
-
-        .graph {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        .axis {
-            position: absolute;
-            background-color: #34495e;
-        }
-
-        .x-axis {
-            width: 100%;
-            height: 2px;
-            bottom: 50%;
-            left: 0;
-        }
-
-        .y-axis {
-            width: 2px;
-            height: 100%;
-            left: 50%;
-            top: 0;
-        }
-
-        .point {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #e74c3c;
-            transform: translate(-50%, 50%);
-            z-index: 5;
-        }
-
-        .curve {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        .point-label {
-            position: absolute;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #2c3e50;
-            background-color: white;
-            padding: 2px 5px;
-            border-radius: 3px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Controles de rango de gráfica */
-        .graph-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
+        .formula-box {
             background-color: #f8f9fa;
             border-radius: 10px;
             padding: 20px;
-            border: 1px solid #e1e5eb;
+            margin-top: 20px;
+            border-left: 5px solid #9b59b6;
         }
 
-        .range-control {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .range-control h4 {
+        .formula-box h4 {
             color: #2c3e50;
             margin-bottom: 15px;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
+            font-size: 1.3rem;
         }
 
-        .range-control h4 i {
-            margin-right: 10px;
-            color: #3498db;
-        }
-
-        .range-inputs {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .range-inputs input {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #e1e5eb;
-            border-radius: 6px;
-            font-size: 1rem;
+        .formula {
+            font-family: 'Courier New', monospace;
+            font-size: 1.4rem;
+            background-color: #eef2f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
             text-align: center;
-        }
-
-        .range-inputs input:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-
-        .range-inputs span {
-            font-weight: 600;
             color: #2c3e50;
-            min-width: 20px;
-        }
-
-        .range-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .range-btn {
-            flex: 1;
-            padding: 8px 12px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
             font-weight: 600;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
         }
 
-        .range-btn:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .range-btn i {
-            margin-right: 5px;
-        }
-
-        .graph-info {
-            margin-top: 15px;
-            font-size: 0.9rem;
+        .formula-explanation {
             color: #7f8c8d;
-            text-align: center;
-            flex-basis: 100%;
-            padding-top: 10px;
-            border-top: 1px solid #e1e5eb;
+            line-height: 1.6;
         }
 
         /* Responsive */
@@ -616,8 +505,8 @@
                 padding: 15px;
             }
 
-            .coeff-inputs {
-                flex-direction: column;
+            .grades-grid {
+                grid-template-columns: 1fr;
             }
 
             .button-container {
@@ -628,22 +517,22 @@
                 width: 100%;
             }
             
-            .decimal-control {
+            .target-grade-selector {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
             }
             
-            .decimal-control label {
-                margin-right: 0;
+            .target-grade-selector label {
+                margin-bottom: 10px;
             }
             
-            .graph-controls {
+            .result-details {
                 flex-direction: column;
+                align-items: center;
             }
             
-            .range-control {
-                min-width: 100%;
+            .result-value {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -652,81 +541,128 @@
     <!-- Menú lateral -->
     <div class="sidebar">
         <div class="logo">
-            <h1><i class="fas fa-square-root-alt"></i> CuadráticaSolver</h1>
-            <p>Soluciones reales y complejas</p>
+            <h1><i class="fas fa-calculator"></i> NotasCalc</h1>
+            <p>Predicción de calificaciones</p>
         </div>
         
         <ul class="menu">
-            <li><a href="#solver" class="active"><i class="fas fa-calculator"></i> Solucionador</a></li>
-            <li><a href="#theory"><i class="fas fa-book"></i> Teoría</a></li>
+            <li><a href="#calculator" class="active"><i class="fas fa-calculator"></i> Calculadora</a></li>
+            <li><a href="#info"><i class="fas fa-info-circle"></i> Información</a></li>
+            <li><a href="#formula"><i class="fas fa-square-root-alt"></i> Fórmula</a></li>
             <li><a href="#examples"><i class="fas fa-list-ol"></i> Ejemplos</a></li>
-            <li><a href="#about"><i class="fas fa-info-circle"></i> Acerca de</a></li>
         </ul>
         
         <div class="footer">
-            <p>© 2023 CuadráticaSolver</p>
-            <p>Desarrollado para fines educativos</p>
+            <p>© 2023 NotasCalc</p>
+            <p>Desarrollado para estudiantes</p>
         </div>
     </div>
 
     <!-- Contenido principal -->
     <div class="main-content">
         <div class="header">
-            <h2>Solución de Ecuación Cuadrática</h2>
-            <p>Ingresa los coeficientes a, b y c para resolver la ecuación ax² + bx + c = 0</p>
+            <h2>Calculadora de Nota Necesaria</h2>
+            <p>Ingresa las notas de tus quices y parciales para calcular la nota que necesitas en el 4° parcial (20% de la nota final). También puedes seleccionar qué nota deseas predecir.</p>
         </div>
 
-        <!-- Panel de entrada de coeficientes -->
+        <!-- Panel de entrada de notas -->
         <div class="input-panel">
             <div class="panel-title">
                 <i class="fas fa-edit"></i>
-                <h3>Ingreso de Coeficientes</h3>
+                <h3>Ingreso de Calificaciones</h3>
             </div>
             
-            <div class="coeff-inputs">
-                <div class="input-group">
-                    <label for="coeff-a">Coeficiente a (x²):</label>
-                    <input type="number" id="coeff-a" placeholder="Ej: 1" value="1" step="any">
+            <!-- Selector de nota a predecir -->
+            <div class="target-grade-selector">
+                <label>¿Qué nota deseas predecir?</label>
+                <div class="grade-option">
+                    <input type="radio" id="predict-p4" name="target-grade" value="P4" checked>
+                    <span>4° Parcial (P4)</span>
+                </div>
+                <div class="grade-option">
+                    <input type="radio" id="predict-p3" name="target-grade" value="P3">
+                    <span>3° Parcial (P3)</span>
+                </div>
+                <div class="grade-option">
+                    <input type="radio" id="predict-p2" name="target-grade" value="P2">
+                    <span>2° Parcial (P2)</span>
+                </div>
+                <div class="grade-option">
+                    <input type="radio" id="predict-p1" name="target-grade" value="P1">
+                    <span>1° Parcial (P1)</span>
+                </div>
+            </div>
+            
+            <div class="grades-grid">
+                <!-- Quices - 5% cada uno -->
+                <div class="grade-input-group">
+                    <label for="quiz1">Quiz 1 (Q1):</label>
+                    <input type="number" id="quiz1" min="0" max="5" step="0.01" placeholder="0.0 - 5.0" value="4.0">
+                    <div class="percentage"><i class="fas fa-percentage"></i> Vale el 5% de la nota final</div>
                 </div>
                 
-                <div class="input-group">
-                    <label for="coeff-b">Coeficiente b (x):</label>
-                    <input type="number" id="coeff-b" placeholder="Ej: -3" value="-3" step="any">
+                <div class="grade-input-group">
+                    <label for="quiz2">Quiz 2 (Q2):</label>
+                    <input type="number" id="quiz2" min="0" max="5" step="0.01" placeholder="0.0 - 5.0" value="4.2">
+                    <div class="percentage"><i class="fas fa-percentage"></i> Vale el 5% de la nota final</div>
                 </div>
                 
-                <div class="input-group">
-                    <label for="coeff-c">Coeficiente c (término independiente):</label>
-                    <input type="number" id="coeff-c" placeholder="Ej: 2" value="2" step="any">
+                <div class="grade-input-group">
+                    <label for="quiz3">Quiz 3 (Q3):</label>
+                    <input type="number" id="quiz3" min="0" max="5" step="0.01" placeholder="0.0 - 5.0" value="3.8">
+                    <div class="percentage"><i class="fas fa-percentage"></i> Vale el 5% de la nota final</div>
+                </div>
+                
+                <div class="grade-input-group">
+                    <label for="quiz4">Quiz 4 (Q4):</label>
+                    <input type="number" id="quiz4" min="0" max="5" step="0.01" placeholder="0.0 - 5.0" value="4.5">
+                    <div class="percentage"><i class="fas fa-percentage"></i> Vale el 5% de la nota final</div>
+                </div>
+                
+                <!-- Parciales - 20% cada uno -->
+                <div class="grade-input-group">
+                    <label for="partial1">1° Parcial (P1):</label>
+                    <input type="number" id="partial1" min="0" max="5" step="0.01" placeholder="0.0 - 5.0" value="3.5">
+                    <div class="percentage"><i class="fas fa-percentage"></i> Vale el 20% de la nota final</div>
+                </div>
+                
+                <div class="grade-input-group">
+                    <label for="partial2">2° Parcial (P2):</label>
+                    <input type="number" id="partial2" min="0" max="5" step="0.01" placeholder="0.0 - 5.0" value="4.0">
+                    <div class="percentage"><i class="fas fa-percentage"></i> Vale el 20% de la nota final</div>
+                </div>
+                
+                <div class="grade-input-group">
+                    <label for="partial3">3° Parcial (P3):</label>
+                    <input type="number" id="partial3" min="0" max="5" step="0.01" placeholder="0.0 - 5.0" value="3.0">
+                    <div class="percentage"><i class="fas fa-percentage"></i> Vale el 20% de la nota final</div>
+                </div>
+                
+                <!-- Nota a predecir (resaltada) -->
+                <div class="grade-input-group">
+                    <label for="partial4" style="color: #e74c3c; font-weight: bold;">4° Parcial (P4):</label>
+                    <input type="number" id="partial4" class="highlighted" min="0" max="5" step="0.01" placeholder="Nota a calcular" readonly>
+                    <div class="percentage" style="color: #e74c3c;"><i class="fas fa-bullseye"></i> Vale el 20% de la nota final - ¡Nota a predecir!</div>
+                    <div class="grade-to-predict">
+                        <h4><i class="fas fa-crosshairs"></i> Nota objetivo</h4>
+                        <p>Esta nota se calculará automáticamente</p>
+                    </div>
                 </div>
             </div>
             
             <div class="button-container">
-                <button id="solve-btn" class="btn btn-primary">
-                    <i class="fas fa-calculator"></i> Resolver Ecuación
+                <button id="calculate-btn" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Calcular Nota Necesaria
                 </button>
                 <button id="clear-btn" class="btn btn-secondary">
-                    <i class="fas fa-broom"></i> Limpiar
+                    <i class="fas fa-broom"></i> Limpiar Campos
                 </button>
                 <button id="example-btn" class="btn btn-secondary">
                     <i class="fas fa-random"></i> Ejemplo Aleatorio
                 </button>
-            </div>
-            
-            <!-- Control de decimales -->
-            <div class="decimal-control">
-                <label for="decimal-control">Precisión decimal en resultados:</label>
-                <div class="decimal-buttons">
-                    <button id="decrease-decimals" class="decimal-btn" title="Reducir decimales">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <div class="decimal-value" id="decimal-value">2</div>
-                    <button id="increase-decimals" class="decimal-btn" title="Aumentar decimales">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-                <div style="margin-left: 15px; font-size: 0.9rem; color: #7f8c8d;">
-                    <i class="fas fa-info-circle"></i> Actualmente mostrando <span id="decimal-text">2 decimales</span>
-                </div>
+                <button id="target-grade-btn" class="btn btn-tertiary">
+                    <i class="fas fa-bullseye"></i> Cambiar Nota a Predecir
+                </button>
             </div>
         </div>
 
@@ -734,314 +670,507 @@
         <div class="results-panel">
             <div class="panel-title">
                 <i class="fas fa-chart-line"></i>
-                <h3>Resultados y Soluciones</h3>
+                <h3>Resultados del Cálculo</h3>
             </div>
             
-            <div class="equation-display">
-                <h4>Ecuación cuadrática:</h4>
-                <div id="equation" class="equation">x² - 3x + 2 = 0</div>
+            <div class="calculation-steps">
+                <h4><i class="fas fa-list-ol"></i> Pasos del cálculo:</h4>
+                <div class="step">
+                    <p><strong>Paso 1:</strong> Sumamos las notas de los quices (5% cada uno)</p>
+                    <div class="step-equation" id="step1">Q_total = Q1 + Q2 + Q3 + Q4</div>
+                </div>
+                <div class="step">
+                    <p><strong>Paso 2:</strong> Sumamos las notas de los parciales conocidos (20% cada uno)</p>
+                    <div class="step-equation" id="step2">P_actual = P1 + P2 + P3</div>
+                </div>
+                <div class="step">
+                    <p><strong>Paso 3:</strong> Calculamos la nota necesaria para alcanzar 3.0 (nota mínima aprobatoria)</p>
+                    <div class="step-equation" id="step3">X = (3.0 - (Q_total × 0.05) - (P_actual × 0.20)) / 0.20</div>
+                </div>
             </div>
             
-            <div class="discriminant">
-                <h4>Discriminante (D = b² - 4ac):</h4>
-                <div id="discriminant-value" class="discriminant-value discriminant-positive">1</div>
-                <p id="discriminant-desc">D > 0 → La ecuación tiene dos soluciones reales diferentes</p>
-            </div>
-            
-            <div class="solutions-container">
-                <div class="solution">
-                    <h4>Solución 1 (x₁):</h4>
-                    <div id="solution1" class="solution-value">2.00</div>
-                    <p>Usando fórmula cuadrática: x = (-b + √D) / 2a</p>
-                    <div class="solution-info">
-                        <i class="fas fa-calculator"></i> Mostrando con <span id="decimal-info">2</span> decimales
+            <div class="result-box">
+                <h3 id="result-title">Nota necesaria en el 4° Parcial</h3>
+                <div id="result-value" class="result-value">--.--</div>
+                <div id="result-message" class="result-message">
+                    Ingresa tus notas y haz clic en "Calcular Nota Necesaria"
+                </div>
+                
+                <div class="result-details">
+                    <div class="detail-item">
+                        <h5>Nota actual acumulada</h5>
+                        <p id="current-grade">--.--</p>
+                    </div>
+                    <div class="detail-item">
+                        <h5>Porcentaje completado</h5>
+                        <p id="completed-percentage">--%</p>
+                    </div>
+                    <div class="detail-item">
+                        <h5>Estado</h5>
+                        <p id="status">No calculado</p>
                     </div>
                 </div>
                 
-                <div class="solution">
-                    <h4>Solución 2 (x₂):</h4>
-                    <div id="solution2" class="solution-value">1.00</div>
-                    <p>Usando fórmula cuadrática: x = (-b - √D) / 2a</p>
-                    <div class="solution-info">
-                        <i class="fas fa-calculator"></i> Mostrando con <span id="decimal-info2">2</span> decimales
-                    </div>
+                <div id="warning-box" class="warning-box" style="display: none;">
+                    <h4><i class="fas fa-exclamation-triangle"></i> ¡Atención!</h4>
+                    <p id="warning-text">La nota necesaria supera el máximo posible (5.0). Deberías mejorar en los próximos exámenes.</p>
                 </div>
-            </div>
-            
-            <div id="complex-solution" class="complex-solution" style="display: none;">
-                <h3><i class="fas fa-exclamation-triangle"></i> Soluciones Complejas</h3>
-                <p>La solución es compleja porque el discriminante es menor que cero (D < 0)</p>
-                <p>Las soluciones son números complejos conjugados</p>
             </div>
         </div>
 
-        <!-- Panel de gráfico -->
-        <div class="graph-panel">
+        <!-- Panel de información -->
+        <div class="info-panel">
             <div class="panel-title">
-                <i class="fas fa-chart-area"></i>
-                <h3>Representación Gráfica</h3>
+                <i class="fas fa-info-circle"></i>
+                <h3>Información sobre el Cálculo</h3>
             </div>
             
-            <p>La gráfica muestra la parábola y = ax² + bx + c y sus intersecciones con el eje x (soluciones reales)</p>
+            <p>Esta calculadora te ayuda a determinar la nota que necesitas obtener en el 4° parcial para alcanzar una nota final de 3.0 (nota mínima aprobatoria en el sistema colombiano).</p>
             
-            <div class="graph-container">
-                <div id="graph-placeholder" class="graph-placeholder">
-                    <i class="fas fa-chart-line"></i>
-                    <p>Ingresa coeficientes y haz clic en "Resolver Ecuación" para ver la gráfica</p>
+            <div class="formula-box">
+                <h4><i class="fas fa-square-root-alt"></i> Fórmula utilizada</h4>
+                <div class="formula">
+                    P4 = (3.0 - 0.05×(Q1+Q2+Q3+Q4) - 0.20×(P1+P2+P3)) / 0.20
                 </div>
-                
-                <div id="graph" class="graph" style="display: none;">
-                    <!-- Se dibujará la gráfica con JavaScript -->
+                <div class="formula-explanation">
+                    <p><strong>Donde:</strong></p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Q1, Q2, Q3, Q4:</strong> Notas de los quices (cada uno vale 5% = 20% en total)</li>
+                        <li><strong>P1, P2, P3:</strong> Notas de los primeros tres parciales (cada uno vale 20% = 60% en total)</li>
+                        <li><strong>P4:</strong> Nota del cuarto parcial (vale 20% de la nota final)</li>
+                        <li><strong>3.0:</strong> Nota mínima para aprobar la materia</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Nota:</strong> Esta fórmula asume que deseas alcanzar exactamente 3.0. Si deseas una nota mayor, el cálculo sería similar pero cambiando el 3.0 por tu nota objetivo.</p>
                 </div>
             </div>
             
-            <!-- Controles de rango de gráfica -->
-            <div class="graph-controls">
-                <div class="range-control">
-                    <h4><i class="fas fa-arrows-alt-h"></i> Rango del Eje X</h4>
-                    <div class="range-inputs">
-                        <input type="number" id="x-min" value="-5" step="1">
-                        <span>≤ x ≤</span>
-                        <input type="number" id="x-max" value="5" step="1">
-                    </div>
-                    <div class="range-buttons">
-                        <button id="zoom-in-x" class="range-btn">
-                            <i class="fas fa-search-minus"></i> Acercar X
-                        </button>
-                        <button id="zoom-out-x" class="range-btn">
-                            <i class="fas fa-search-plus"></i> Alejar X
-                        </button>
-                        <button id="reset-x" class="range-btn">
-                            <i class="fas fa-redo"></i> Resetear X
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="range-control">
-                    <h4><i class="fas fa-arrows-alt-v"></i> Rango del Eje Y</h4>
-                    <div class="range-inputs">
-                        <input type="number" id="y-min" value="-10" step="1">
-                        <span>≤ y ≤</span>
-                        <input type="number" id="y-max" value="10" step="1">
-                    </div>
-                    <div class="range-buttons">
-                        <button id="zoom-in-y" class="range-btn">
-                            <i class="fas fa-search-minus"></i> Acercar Y
-                        </button>
-                        <button id="zoom-out-y" class="range-btn">
-                            <i class="fas fa-search-plus"></i> Alejar Y
-                        </button>
-                        <button id="reset-y" class="range-btn">
-                            <i class="fas fa-redo"></i> Resetear Y
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="graph-info">
-                    <i class="fas fa-info-circle"></i> Ajusta los rangos para explorar diferentes partes de la parábola
-                </div>
+            <div class="warning-box" style="margin-top: 20px;">
+                <h4><i class="fas fa-lightbulb"></i> Consejos para estudiantes</h4>
+                <p>Recuerda que esta es una herramienta de predicción. Para mejorar tus resultados:</p>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>Estudia consistentemente a lo largo del semestre</li>
+                    <li>Revisa tus errores en evaluaciones anteriores</li>
+                    <li>Consulta con tu profesor si tienes dudas sobre los temas</li>
+                    <li>Organiza tu tiempo de estudio de manera efectiva</li>
+                </ul>
             </div>
         </div>
     </div>
 
     <script>
-        // Elementos DOM
-        const coeffA = document.getElementById('coeff-a');
-        const coeffB = document.getElementById('coeff-b');
-        const coeffC = document.getElementById('coeff-c');
-        const solveBtn = document.getElementById('solve-btn');
+        // Elementos DOM principales
+        const quiz1Input = document.getElementById('quiz1');
+        const quiz2Input = document.getElementById('quiz2');
+        const quiz3Input = document.getElementById('quiz3');
+        const quiz4Input = document.getElementById('quiz4');
+        const partial1Input = document.getElementById('partial1');
+        const partial2Input = document.getElementById('partial2');
+        const partial3Input = document.getElementById('partial3');
+        const partial4Input = document.getElementById('partial4');
+        
+        const calculateBtn = document.getElementById('calculate-btn');
         const clearBtn = document.getElementById('clear-btn');
         const exampleBtn = document.getElementById('example-btn');
-        const equationDisplay = document.getElementById('equation');
-        const discriminantValue = document.getElementById('discriminant-value');
-        const discriminantDesc = document.getElementById('discriminant-desc');
-        const solution1 = document.getElementById('solution1');
-        const solution2 = document.getElementById('solution2');
-        const complexSolution = document.getElementById('complex-solution');
-        const graphPlaceholder = document.getElementById('graph-placeholder');
-        const graph = document.getElementById('graph');
+        const targetGradeBtn = document.getElementById('target-grade-btn');
         
-        // Elementos para control de decimales
-        const decreaseDecimalsBtn = document.getElementById('decrease-decimals');
-        const increaseDecimalsBtn = document.getElementById('increase-decimals');
-        const decimalValueDisplay = document.getElementById('decimal-value');
-        const decimalText = document.getElementById('decimal-text');
-        const decimalInfo1 = document.getElementById('decimal-info');
-        const decimalInfo2 = document.getElementById('decimal-info2');
+        const resultTitle = document.getElementById('result-title');
+        const resultValue = document.getElementById('result-value');
+        const resultMessage = document.getElementById('result-message');
+        const currentGradeEl = document.getElementById('current-grade');
+        const completedPercentageEl = document.getElementById('completed-percentage');
+        const statusEl = document.getElementById('status');
+        const warningBox = document.getElementById('warning-box');
+        const warningText = document.getElementById('warning-text');
         
-        // Elementos para control de rangos de gráfica
-        const xMinInput = document.getElementById('x-min');
-        const xMaxInput = document.getElementById('x-max');
-        const yMinInput = document.getElementById('y-min');
-        const yMaxInput = document.getElementById('y-max');
-        const zoomInXBtn = document.getElementById('zoom-in-x');
-        const zoomOutXBtn = document.getElementById('zoom-out-x');
-        const resetXBtn = document.getElementById('reset-x');
-        const zoomInYBtn = document.getElementById('zoom-in-y');
-        const zoomOutYBtn = document.getElementById('zoom-out-y');
-        const resetYBtn = document.getElementById('reset-y');
-
-        // Variables para almacenar valores
-        let currentSolutions = { x1: 2, x2: 1 };
-        let currentDiscriminant = 1;
-        let decimalPlaces = 2;
-        let currentCoefficients = { a: 1, b: -3, c: 2 };
+        const step1El = document.getElementById('step1');
+        const step2El = document.getElementById('step2');
+        const step3El = document.getElementById('step3');
         
-        // Rangos iniciales de la gráfica
-        let xRange = { min: -5, max: 5 };
-        let yRange = { min: -10, max: 10 };
-        let defaultXRange = { min: -5, max: 5 };
-        let defaultYRange = { min: -10, max: 10 };
-
-        // Ejemplos de ecuaciones cuadráticas
-        const examples = [
-            {a: 1, b: -3, c: 2, desc: "x² - 3x + 2 = 0 (D > 0)"},
-            {a: 1, b: -2, c: 1, desc: "x² - 2x + 1 = 0 (D = 0)"},
-            {a: 1, b: 1, c: 1, desc: "x² + x + 1 = 0 (D < 0)"},
-            {a: 2, b: -4, c: -6, desc: "2x² - 4x - 6 = 0 (D > 0)"},
-            {a: 1, b: 0, c: -4, desc: "x² - 4 = 0 (D > 0)"},
-            {a: 1, b: 4, c: 4, desc: "x² + 4x + 4 = 0 (D = 0)"},
-            {a: 1, b: -5, c: 6, desc: "x² - 5x + 6 = 0 (D > 0)"},
-            {a: 1, b: -6, c: 9, desc: "x² - 6x + 9 = 0 (D = 0)"},
-            {a: 2, b: 3, c: 5, desc: "2x² + 3x + 5 = 0 (D < 0)"},
-            {a: -1, b: 4, c: -3, desc: "-x² + 4x - 3 = 0 (D > 0, parábola invertida)"}
-        ];
-
-        // Función para actualizar el control de decimales
-        function updateDecimalControls() {
-            decimalValueDisplay.textContent = decimalPlaces;
-            decimalText.textContent = `${decimalPlaces} decimal${decimalPlaces !== 1 ? 'es' : ''}`;
-            decimalInfo1.textContent = decimalPlaces;
-            decimalInfo2.textContent = decimalPlaces;
+        // Elementos para selección de nota a predecir
+        const predictP1Radio = document.getElementById('predict-p1');
+        const predictP2Radio = document.getElementById('predict-p2');
+        const predictP3Radio = document.getElementById('predict-p3');
+        const predictP4Radio = document.getElementById('predict-p4');
+        
+        // Variables para el estado
+        let targetGradeToPredict = 'P4'; // Por defecto predecir el 4° parcial
+        let lastCalculatedValue = 0;
+        
+        // Función para resaltar el campo de nota a predecir
+        function highlightTargetGradeField() {
+            // Remover resaltado de todos los campos
+            const allInputs = document.querySelectorAll('.grade-input-group input');
+            allInputs.forEach(input => {
+                input.classList.remove('highlighted');
+            });
             
-            // Habilitar/deshabilitar botones según límites
-            decreaseDecimalsBtn.disabled = decimalPlaces <= 0;
-            increaseDecimalsBtn.disabled = decimalPlaces >= 8;
-            
-            // Actualizar las soluciones con los nuevos decimales
-            updateSolutionDisplay();
-        }
-
-        // Función para actualizar los controles de rango
-        function updateRangeControls() {
-            xMinInput.value = xRange.min;
-            xMaxInput.value = xRange.max;
-            yMinInput.value = yRange.min;
-            yMaxInput.value = yRange.max;
-        }
-
-        // Función para formatear números con los decimales configurados
-        function formatNumber(num) {
-            if (decimalPlaces === 0) {
-                return Math.round(num).toString();
+            // Aplicar resaltado al campo seleccionado
+            let targetInput;
+            switch(targetGradeToPredict) {
+                case 'P1':
+                    targetInput = partial1Input;
+                    break;
+                case 'P2':
+                    targetInput = partial2Input;
+                    break;
+                case 'P3':
+                    targetInput = partial3Input;
+                    break;
+                case 'P4':
+                    targetInput = partial4Input;
+                    break;
             }
             
-            const factor = Math.pow(10, decimalPlaces);
-            const rounded = Math.round(num * factor) / factor;
-            
-            // Formatear con el número correcto de decimales
-            return rounded.toFixed(decimalPlaces);
-        }
-
-        // Función para formatear números para la ecuación (sin decimales si son enteros)
-        function formatNumberForEquation(num) {
-            if (Math.abs(num - Math.round(num)) < 0.0001) {
-                return Math.round(num).toString();
-            }
-            
-            const factor = Math.pow(10, 2);
-            const rounded = Math.round(num * factor) / factor;
-            return rounded.toString();
-        }
-
-        // Función para actualizar la ecuación mostrada
-        function updateEquationDisplay(a, b, c) {
-            let equation = "";
-            
-            // Coeficiente a
-            if (a === 1) {
-                equation += "x²";
-            } else if (a === -1) {
-                equation += "-x²";
-            } else {
-                equation += `${formatNumberForEquation(a)}x²`;
-            }
-            
-            // Coeficiente b
-            if (b > 0) {
-                equation += ` + ${b === 1 ? "" : formatNumberForEquation(b)}x`;
-            } else if (b < 0) {
-                equation += ` - ${b === -1 ? "" : formatNumberForEquation(-b)}x`;
-            }
-            
-            // Coeficiente c
-            if (c > 0) {
-                equation += ` + ${formatNumberForEquation(c)}`;
-            } else if (c < 0) {
-                equation += ` - ${formatNumberForEquation(-c)}`;
-            }
-            
-            equation += " = 0";
-            
-            // Limpiar signos dobles
-            equation = equation.replace("+ -", "- ");
-            equationDisplay.textContent = equation;
-        }
-
-        // Función para actualizar la visualización de soluciones
-        function updateSolutionDisplay() {
-            if (currentDiscriminant >= 0) {
-                solution1.textContent = formatNumber(currentSolutions.x1);
-                solution2.textContent = formatNumber(currentSolutions.x2);
-            }
-        }
-
-        // Función para resolver la ecuación cuadrática
-        function solveQuadratic() {
-            // Obtener valores de los coeficientes
-            const a = parseFloat(coeffA.value) || 0;
-            const b = parseFloat(coeffB.value) || 0;
-            const c = parseFloat(coeffC.value) || 0;
-            
-            // Guardar coeficientes actuales
-            currentCoefficients = { a, b, c };
-            
-            // Actualizar la ecuación mostrada
-            updateEquationDisplay(a, b, c);
-            
-            // Calcular el discriminante
-            currentDiscriminant = b * b - 4 * a * c;
-            
-            // Mostrar el discriminante
-            discriminantValue.textContent = formatNumber(currentDiscriminant);
-            
-            // Determinar el tipo de discriminante
-            let discClass = "";
-            let discText = "";
-            
-            if (currentDiscriminant > 0) {
-                discClass = "discriminant-positive";
-                discText = "D > 0 → La ecuación tiene dos soluciones reales diferentes";
-            } else if (currentDiscriminant === 0) {
-                discClass = "discriminant-zero";
-                discText = "D = 0 → La ecuación tiene una solución real doble";
-            } else {
-                discClass = "discriminant-negative";
-                discText = "D < 0 → La ecuación tiene soluciones complejas conjugadas";
-            }
-            
-            discriminantValue.className = `discriminant-value ${discClass}`;
-            discriminantDesc.textContent = discText;
-            
-            // Calcular y mostrar soluciones según el discriminante
-            if (currentDiscriminant >= 0 && a !== 0) {
-                // Soluciones reales
-                const sqrtDiscriminant = Math.sqrt(currentDiscriminant);
-                currentSolutions.x1 = (-b + sqrtDiscriminant) / (2 * a);
-                currentSolutions.x2 = (-b - sqrtDiscriminant) / (2 * a);
+            if (targetInput) {
+                targetInput.classList.add('highlighted');
                 
-                // Actualizar visualización con decimales actuales
-                updateSolutionDisplay();
+                // Actualizar texto del campo resaltado
+                const percentageDiv = targetInput.parentElement.querySelector('.percentage');
+                if (percentageDiv) {
+                    percentageDiv.innerHTML = `<i class="fas fa-bullseye"></i> Vale el 20% de la nota final - <strong style="color:#e74c3c">¡Nota a predecir!</strong>`;
+                }
                 
-                // Mostrar soluciones reales, ocultar mensaje complejo
-                document.querySelector('.
+                // Actualizar el placeholder
+                targetInput.placeholder = "Nota a calcular";
+                targetInput.readOnly = true;
+                
+                // Habilitar los otros campos para edición
+                enableOtherInputs();
+            }
+        }
+        
+        // Función para habilitar los campos que no son el objetivo
+        function enableOtherInputs() {
+            const inputs = [
+                {input: quiz1Input, enabled: true},
+                {input: quiz2Input, enabled: true},
+                {input: quiz3Input, enabled: true},
+                {input: quiz4Input, enabled: true},
+                {input: partial1Input, enabled: targetGradeToPredict !== 'P1'},
+                {input: partial2Input, enabled: targetGradeToPredict !== 'P2'},
+                {input: partial3Input, enabled: targetGradeToPredict !== 'P3'},
+                {input: partial4Input, enabled: targetGradeToPredict !== 'P4'}
+            ];
+            
+            inputs.forEach(item => {
+                item.input.readOnly = !item.enabled;
+                if (item.enabled) {
+                    item.input.placeholder = "0.0 - 5.0";
+                }
+            });
+        }
+        
+        // Función para calcular la nota necesaria
+        function calculateRequiredGrade() {
+            // Obtener valores de los inputs
+            const Q1 = parseFloat(quiz1Input.value) || 0;
+            const Q2 = parseFloat(quiz2Input.value) || 0;
+            const Q3 = parseFloat(quiz3Input.value) || 0;
+            const Q4 = parseFloat(quiz4Input.value) || 0;
+            const P1 = parseFloat(partial1Input.value) || 0;
+            const P2 = parseFloat(partial2Input.value) || 0;
+            const P3 = parseFloat(partial3Input.value) || 0;
+            const P4 = parseFloat(partial4Input.value) || 0;
+            
+            // Calcular nota actual acumulada
+            const quizTotal = Q1 + Q2 + Q3 + Q4;
+            const knownPartialTotal = (targetGradeToPredict === 'P1' ? P2+P3+P4 : 
+                                      targetGradeToPredict === 'P2' ? P1+P3+P4 :
+                                      targetGradeToPredict === 'P3' ? P1+P2+P4 :
+                                      P1+P2+P3); // P4 por defecto
+            
+            // Calcular nota actual (con lo que llevamos)
+            const currentGradeValue = (quizTotal * 0.05) + (knownPartialTotal * 0.20);
+            
+            // Calcular porcentaje completado
+            const totalPossibleWithoutTarget = (4 * 0.05) + (3 * 0.20); // 80% si falta 1 parcial
+            const completedPercentage = (currentGradeValue / 3.0) * 100; // Porcentaje de 3.0 alcanzado
+            
+            // Actualizar paso 1
+            step1El.textContent = `Q_total = ${Q1.toFixed(2)} + ${Q2.toFixed(2)} + ${Q3.toFixed(2)} + ${Q4.toFixed(2)} = ${quizTotal.toFixed(2)}`;
+            
+            // Actualizar paso 2 (dependiendo de qué parcial estamos prediciendo)
+            let partialSumText = '';
+            let partialSumValue = 0;
+            
+            switch(targetGradeToPredict) {
+                case 'P1':
+                    partialSumText = `P_actual = P2 + P3 + P4 = ${P2.toFixed(2)} + ${P3.toFixed(2)} + ${P4.toFixed(2)}`;
+                    partialSumValue = P2 + P3 + P4;
+                    break;
+                case 'P2':
+                    partialSumText = `P_actual = P1 + P3 + P4 = ${P1.toFixed(2)} + ${P3.toFixed(2)} + ${P4.toFixed(2)}`;
+                    partialSumValue = P1 + P3 + P4;
+                    break;
+                case 'P3':
+                    partialSumText = `P_actual = P1 + P2 + P4 = ${P1.toFixed(2)} + ${P2.toFixed(2)} + ${P4.toFixed(2)}`;
+                    partialSumValue = P1 + P2 + P4;
+                    break;
+                case 'P4':
+                    partialSumText = `P_actual = P1 + P2 + P3 = ${P1.toFixed(2)} + ${P2.toFixed(2)} + ${P3.toFixed(2)}`;
+                    partialSumValue = P1 + P2 + P3;
+                    break;
+            }
+            
+            step2El.textContent = `${partialSumText} = ${partialSumValue.toFixed(2)}`;
+            
+            // Calcular nota necesaria para el parcial objetivo
+            // Fórmula: X = (3.0 - (quizTotal * 0.05) - (knownPartialTotal * 0.20)) / 0.20
+            const requiredGrade = (3.0 - (quizTotal * 0.05) - (knownPartialTotal * 0.20)) / 0.20;
+            
+            // Guardar el último valor calculado
+            lastCalculatedValue = requiredGrade;
+            
+            // Actualizar paso 3 con la fórmula específica
+            const targetGradeName = getGradeName(targetGradeToPredict);
+            step3El.textContent = `${targetGradeName} = (3.0 - (${quizTotal.toFixed(2)} × 0.05) - (${knownPartialTotal.toFixed(2)} × 0.20)) / 0.20`;
+            
+            // Actualizar el campo de la nota calculada
+            let targetInput;
+            switch(targetGradeToPredict) {
+                case 'P1':
+                    targetInput = partial1Input;
+                    break;
+                case 'P2':
+                    targetInput = partial2Input;
+                    break;
+                case 'P3':
+                    targetInput = partial3Input;
+                    break;
+                case 'P4':
+                    targetInput = partial4Input;
+                    break;
+            }
+            
+            if (targetInput) {
+                targetInput.value = requiredGrade.toFixed(2);
+            }
+            
+            // Actualizar resultados
+            const gradeName = getGradeName(targetGradeToPredict);
+            resultTitle.textContent = `Nota necesaria en el ${gradeName}`;
+            
+            let resultColor = '#2ecc71'; // Verde por defecto
+            let statusText = 'Aprobable';
+            
+            if (requiredGrade > 5.0) {
+                resultColor = '#e74c3c'; // Rojo
+                resultValue.textContent = '> 5.00';
+                resultMessage.textContent = `Necesitas más de 5.0 en el ${gradeName} para aprobar.`;
+                statusText = 'Difícil';
+                warningBox.style.display = 'block';
+                warningText.textContent = `La nota necesaria (${requiredGrade.toFixed(2)}) supera el máximo posible (5.0). Considera que necesitarás un desempeño excepcional o mejorar en otras evaluaciones.`;
+            } else if (requiredGrade < 0) {
+                resultColor = '#2ecc71'; // Verde
+                resultValue.textContent = '< 0.00';
+                resultMessage.textContent = `¡Ya tienes aprobada la materia!`;
+                statusText = 'Aprobado';
+                warningBox.style.display = 'none';
+            } else {
+                resultColor = requiredGrade <= 3.5 ? '#2ecc71' : 
+                             requiredGrade <= 4.0 ? '#f39c12' : '#e74c3c';
+                resultValue.textContent = requiredGrade.toFixed(2);
+                resultMessage.textContent = `Necesitas al menos ${requiredGrade.toFixed(2)} en el ${gradeName} para alcanzar 3.0 en la nota final.`;
+                statusText = requiredGrade <= 3.5 ? 'Fácil' : 
+                            requiredGrade <= 4.0 ? 'Moderado' : 'Difícil';
+                warningBox.style.display = requiredGrade >= 4.5 ? 'block' : 'none';
+                
+                if (requiredGrade >= 4.5) {
+                    warningText.textContent = `La nota necesaria (${requiredGrade.toFixed(2)}) es alta. Considera estudiar más para esta evaluación.`;
+                } else {
+                    warningBox.style.display = 'none';
+                }
+            }
+            
+            resultValue.style.color = resultColor;
+            
+            // Actualizar detalles
+            currentGradeEl.textContent = currentGradeValue.toFixed(2);
+            completedPercentageEl.textContent = completedPercentage.toFixed(1) + '%';
+            statusEl.textContent = statusText;
+            statusEl.style.color = resultColor;
+            
+            // Actualizar color de la nota actual
+            if (currentGradeValue >= 2.4) { // 80% de 3.0
+                currentGradeEl.style.color = '#2ecc71';
+            } else if (currentGradeValue >= 1.8) { // 60% de 3.0
+                currentGradeEl.style.color = '#f39c12';
+            } else {
+                currentGradeEl.style.color = '#e74c3c';
+            }
+        }
+        
+        // Función para obtener el nombre completo de la evaluación
+        function getGradeName(gradeCode) {
+            switch(gradeCode) {
+                case 'P1': return '1° Parcial';
+                case 'P2': return '2° Parcial';
+                case 'P3': return '3° Parcial';
+                case 'P4': return '4° Parcial';
+                default: return 'Parcial';
+            }
+        }
+        
+        // Función para limpiar todos los campos
+        function clearAllFields() {
+            const inputs = [
+                quiz1Input, quiz2Input, quiz3Input, quiz4Input,
+                partial1Input, partial2Input, partial3Input, partial4Input
+            ];
+            
+            inputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('highlighted');
+            });
+            
+            // Restablecer valores por defecto
+            quiz1Input.value = '4.0';
+            quiz2Input.value = '4.2';
+            quiz3Input.value = '3.8';
+            quiz4Input.value = '4.5';
+            partial1Input.value = '3.5';
+            partial2Input.value = '4.0';
+            partial3Input.value = '3.0';
+            partial4Input.value = '';
+            
+            // Restablecer resultados
+            resultValue.textContent = '--.--';
+            resultMessage.textContent = 'Ingresa tus notas y haz clic en "Calcular Nota Necesaria"';
+            currentGradeEl.textContent = '--.--';
+            completedPercentageEl.textContent = '--%';
+            statusEl.textContent = 'No calculado';
+            warningBox.style.display = 'none';
+            
+            // Restablecer pasos
+            step1El.textContent = 'Q_total = Q1 + Q2 + Q3 + Q4';
+            step2El.textContent = 'P_actual = P1 + P2 + P3';
+            step3El.textContent = 'X = (3.0 - (Q_total × 0.05) - (P_actual × 0.20)) / 0.20';
+            
+            // Aplicar resaltado al campo objetivo actual
+            highlightTargetGradeField();
+        }
+        
+        // Función para cargar un ejemplo aleatorio
+        function loadRandomExample() {
+            // Ejemplos predefinidos
+            const examples = [
+                { Q1: 4.5, Q2: 4.0, Q3: 3.5, Q4: 4.2, P1: 3.8, P2: 4.1, P3: 3.2 },
+                { Q1: 3.0, Q2: 3.5, Q3: 4.0, Q4: 3.8, P1: 2.5, P2: 3.0, P3: 2.8 },
+                { Q1: 4.8, Q2: 4.5, Q3: 4.7, Q4: 4.9, P1: 4.5, P2: 4.8, P3: 4.6 },
+                { Q1: 2.5, Q2: 3.0, Q3: 2.8, Q4: 3.2, P1: 2.0, P2: 2.5, P3: 2.2 },
+                { Q1: 3.8, Q2: 4.2, Q3: 3.5, Q4: 4.0, P1: 3.0, P2: 3.5, P3: 3.8 }
+            ];
+            
+            // Seleccionar un ejemplo aleatorio
+            const example = examples[Math.floor(Math.random() * examples.length)];
+            
+            // Aplicar valores del ejemplo
+            quiz1Input.value = example.Q1;
+            quiz2Input.value = example.Q2;
+            quiz3Input.value = example.Q3;
+            quiz4Input.value = example.Q4;
+            partial1Input.value = example.P1;
+            partial2Input.value = example.P2;
+            partial3Input.value = example.P3;
+            partial4Input.value = '';
+            
+            // Calcular automáticamente
+            calculateRequiredGrade();
+        }
+        
+        // Función para cambiar la nota a predecir
+        function changeTargetGrade() {
+            // Obtener el valor seleccionado
+            const selected = document.querySelector('input[name="target-grade"]:checked');
+            if (selected) {
+                targetGradeToPredict = selected.value;
+                
+                // Limpiar el campo que ahora será calculado
+                switch(targetGradeToPredict) {
+                    case 'P1':
+                        partial1Input.value = '';
+                        break;
+                    case 'P2':
+                        partial2Input.value = '';
+                        break;
+                    case 'P3':
+                        partial3Input.value = '';
+                        break;
+                    case 'P4':
+                        partial4Input.value = '';
+                        break;
+                }
+                
+                // Aplicar resaltado
+                highlightTargetGradeField();
+                
+                // Si ya había un cálculo previo, recalcular
+                if (lastCalculatedValue !== 0) {
+                    calculateRequiredGrade();
+                }
+                
+                // Mostrar mensaje de confirmación
+                alert(`Ahora predecirás la nota del ${getGradeName(targetGradeToPredict)}. Los otros campos estarán habilitados para edición.`);
+            }
+        }
+        
+        // Función para inicializar la aplicación
+        function init() {
+            // Configurar eventos
+            calculateBtn.addEventListener('click', calculateRequiredGrade);
+            clearBtn.addEventListener('click', clearAllFields);
+            exampleBtn.addEventListener('click', loadRandomExample);
+            targetGradeBtn.addEventListener('click', changeTargetGrade);
+            
+            // Configurar navegación del menú
+            document.querySelectorAll('.menu a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Actualizar clase activa
+                    document.querySelectorAll('.menu a').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    this.classList.add('active');
+                    
+                    // Desplazar a la sección correspondiente
+                    const sectionId = this.getAttribute('href').substring(1);
+                    if (sectionId === 'calculator') {
+                        document.querySelector('.input-panel').scrollIntoView({ behavior: 'smooth' });
+                    } else if (sectionId === 'info') {
+                        document.querySelector('.info-panel').scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // Configurar eventos para los radio buttons de predicción
+            const radioButtons = document.querySelectorAll('input[name="target-grade"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        targetGradeToPredict = this.value;
+                        highlightTargetGradeField();
+                    }
+                });
+            });
+            
+            // Permitir calcular con Enter en cualquier campo
+            const inputFields = document.querySelectorAll('.grade-input-group input');
+            inputFields.forEach(input => {
+                input.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') {
+                        calculateRequiredGrade();
+                    }
+                });
+            });
+            
+            // Inicializar con valores por defecto y resaltado
+            highlightTargetGradeField();
+        }
+        
+        // Inicializar cuando se cargue la página
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
