@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solucionador de Ecuación Cuadrática</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* Menú lateral */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #2c3e50, #1a1a2e);
+            color: white;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #3498db;
+        }
+
+        .logo p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .menu li {
+            margin-bottom: 10px;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .menu a:hover, .menu a.active {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            transform: translateX(5px);
+        }
+
+        .menu i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Contenido principal */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e5eb;
+        }
+
+        .header h2 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        /* Panel de entrada */
+        .input-panel {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .panel-title i {
+            color: #3498db;
+            margin-right: 10px;
+        }
+
+        .coeff-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #e1e5eb;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+            transform: translateY(-2px);
+        }
+
+        .btn-tertiary {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .btn-tertiary:hover {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(155, 89, 182, 0.3);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        /* Control de decimales */
+        .decimal-control {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 20px;
+            border: 1px solid #e1e5eb;
+        }
+
+        .decimal-control label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-right: 15px;
+        }
+
+        .decimal-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .decimal-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .decimal-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.1);
+        }
+
+        .decimal-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .decimal-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        /* Panel de resultados */
+        .results-panel {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .equation-display {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid #3498db;
+        }
+
+        .equation-display h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .equation {
+            font-size: 1.8rem;
+            text-align: center;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 10px;
+        }
+
+        .discriminant {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .discriminant h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .discriminant-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .discriminant-positive {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .discriminant-zero {
+            background-color: rgba(241, 196, 15, 0.2);
+            color: #f39c12;
+        }
+
+        .discriminant-negative {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        .solutions-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .solution {
+            flex: 1;
+            min-width: 250px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .solution h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .solution-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 10px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .solution-info {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        .complex-solution {
+            flex: 1;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .complex-solution h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .complex-solution p {
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+
+        /* Panel de gráfico */
+        .graph-panel {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .graph-container {
+            height: 350px;
+            position: relative;
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .graph-placeholder {
+            text-align: center;
+            color: #7f8c8d;
+        }
+
+        .graph-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        .graph {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .axis {
+            position: absolute;
+            background-color: #34495e;
+        }
+
+        .x-axis {
+            width: 100%;
+            height: 2px;
+            bottom: 50%;
+            left: 0;
+        }
+
+        .y-axis {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+        }
+
+        .point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #e74c3c;
+            transform: translate(-50%, 50%);
+            z-index: 5;
+        }
+
+        .curve {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .point-label {
+            position: absolute;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+            background-color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Controles de rango de gráfica */
+        .graph-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e1e5eb;
+        }
+
+        .range-control {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .range-control h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .range-control h4 i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+
+        .range-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .range-inputs input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e1e5eb;
+            border-radius: 6px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .range-inputs input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .range-inputs span {
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 20px;
+        }
+
+        .range-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .range-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .range-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .range-btn i {
+            margin-right: 5px;
+        }
+
+        .graph-info {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
+            flex-basis: 100%;
+            padding-top: 10px;
+            border-top: 1px solid #e1e5eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .menu {
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .menu li {
+                margin-bottom: 0;
+                margin-right: 10px;
+            }
+
+            .menu a {
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+
+            .coeff-inputs {
+                flex-direction: column;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+            
+            .decimal-control {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .decimal-control label {
+                margin-right: 0;
+            }
+            
+            .graph-controls {
+                flex-direction: column;
+            }
+            
+            .range-control {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menú lateral -->
+    <div class="sidebar">
+        <div class="logo">
+            <h1><i class="fas fa-square-root-alt"></i> CuadráticaSolver</h1>
+            <p>Soluciones reales y complejas</p>
+        </div>
+        
+        <ul class="menu">
+            <li><a href="#solver" class="active"><i class="fas fa-calculator"></i> Solucionador</a></li>
+            <li><a href="#theory"><i class="fas fa-book"></i> Teoría</a></li>
+            <li><a href="#examples"><i class="fas fa-list-ol"></i> Ejemplos</a></li>
+            <li><a href="#about"><i class="fas fa-info-circle"></i> Acerca de</a></li>
+        </ul>
+        
+        <div class="footer">
+            <p>© 2023 CuadráticaSolver</p>
+            <p>Desarrollado para fines educativos</p>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <div class="header">
+            <h2>Solución de Ecuación Cuadrática</h2>
+            <p>Ingresa los coeficientes a, b y c para resolver la ecuación ax² + bx + c = 0</p>
+        </div>
+
+        <!-- Panel de entrada de coeficientes -->
+        <div class="input-panel">
+            <div class="panel-title">
+                <i class="fas fa-edit"></i>
+                <h3>Ingreso de Coeficientes</h3>
+            </div>
+            
+            <div class="coeff-inputs">
+                <div class="input-group">
+                    <label for="coeff-a">Coeficiente a (x²):</label>
+                    <input type="number" id="coeff-a" placeholder="Ej: 1" value="1" step="any">
+                </div>
+                
+                <div class="input-group">
+                    <label for="coeff-b">Coeficiente b (x):</label>
+                    <input type="number" id="coeff-b" placeholder="Ej: -3" value="-3" step="any">
+                </div>
+                
+                <div class="input-group">
+                    <label for="coeff-c">Coeficiente c (término independiente):</label>
+                    <input type="number" id="coeff-c" placeholder="Ej: 2" value="2" step="any">
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <button id="solve-btn" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Resolver Ecuación
+                </button>
+                <button id="clear-btn" class="btn btn-secondary">
+                    <i class="fas fa-broom"></i> Limpiar
+                </button>
+                <button id="example-btn" class="btn btn-secondary">
+                    <i class="fas fa-random"></i> Ejemplo Aleatorio
+                </button>
+            </div>
+            
+            <!-- Control de decimales -->
+            <div class="decimal-control">
+                <label for="decimal-control">Precisión decimal en resultados:</label>
+                <div class="decimal-buttons">
+                    <button id="decrease-decimals" class="decimal-btn" title="Reducir decimales">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <div class="decimal-value" id="decimal-value">2</div>
+                    <button id="increase-decimals" class="decimal-btn" title="Aumentar decimales">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div style="margin-left: 15px; font-size: 0.9rem; color: #7f8c8d;">
+                    <i class="fas fa-info-circle"></i> Actualmente mostrando <span id="decimal-text">2 decimales</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de resultados -->
+        <div class="results-panel">
+            <div class="panel-title">
+                <i class="fas fa-chart-line"></i>
+                <h3>Resultados y Soluciones</h3>
+            </div>
+            
+            <div class="equation-display">
+                <h4>Ecuación cuadrática:</h4>
+                <div id="equation" class="equation">x² - 3x + 2 = 0</div>
+            </div>
+            
+            <div class="discriminant">
+                <h4>Discriminante (D = b² - 4ac):</h4>
+                <div id="discriminant-value" class="discriminant-value discriminant-positive">1</div>
+                <p id="discriminant-desc">D > 0 → La ecuación tiene dos soluciones reales diferentes</p>
+            </div>
+            
+            <div class="solutions-container">
+                <div class="solution">
+                    <h4>Solución 1 (x₁):</h4>
+                    <div id="solution1" class="solution-value">2.00</div>
+                    <p>Usando fórmula cuadrática: x = (-b + √D) / 2a</p>
+                    <div class="solution-info">
+                        <i class="fas fa-calculator"></i> Mostrando con <span id="decimal-info">2</span> decimales
+                    </div>
+                </div>
+                
+                <div class="solution">
+                    <h4>Solución 2 (x₂):</h4>
+                    <div id="solution2" class="solution-value">1.00</div>
+                    <p>Usando fórmula cuadrática: x = (-b - √D) / 2a</p>
+                    <div class="solution-info">
+                        <i class="fas fa-calculator"></i> Mostrando con <span id="decimal-info2">2</span> decimales
+                    </div>
+                </div>
+            </div>
+            
+            <div id="complex-solution" class="complex-solution" style="display: none;">
+                <h3><i class="fas fa-exclamation-triangle"></i> Soluciones Complejas</h3>
+                <p>La solución es compleja porque el discriminante es menor que cero (D < 0)</p>
+                <p>Las soluciones son números complejos conjugados</p>
+            </div>
+        </div>
+
+        <!-- Panel de gráfico -->
+        <div class="graph-panel">
+            <div class="panel-title">
+                <i class="fas fa-chart-area"></i>
+                <h3>Representación Gráfica</h3>
+            </div>
+            
+            <p>La gráfica muestra la parábola y = ax² + bx + c y sus intersecciones con el eje x (soluciones reales)</p>
+            
+            <div class="graph-container">
+                <div id="graph-placeholder" class="graph-placeholder">
+                    <i class="fas fa-chart-line"></i>
+                    <p>Ingresa coeficientes y haz clic en "Resolver Ecuación" para ver la gráfica</p>
+                </div>
+                
+                <div id="graph" class="graph" style="display: none;">
+                    <!-- Se dibujará la gráfica con JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Controles de rango de gráfica -->
+            <div class="graph-controls">
+                <div class="range-control">
+                    <h4><i class="fas fa-arrows-alt-h"></i> Rango del Eje X</h4>
+                    <div class="range-inputs">
+                        <input type="number" id="x-min" value="-5" step="1">
+                        <span>≤ x ≤</span>
+                        <input type="number" id="x-max" value="5" step="1">
+                    </div>
+                    <div class="range-buttons">
+                        <button id="zoom-in-x" class="range-btn">
+                            <i class="fas fa-search-minus"></i> Acercar X
+                        </button>
+                        <button id="zoom-out-x" class="range-btn">
+                            <i class="fas fa-search-plus"></i> Alejar X
+                        </button>
+                        <button id="reset-x" class="range-btn">
+                            <i class="fas fa-redo"></i> Resetear X
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="range-control">
+                    <h4><i class="fas fa-arrows-alt-v"></i> Rango del Eje Y</h4>
+                    <div class="range-inputs">
+                        <input type="number" id="y-min" value="-10" step="1">
+                        <span>≤ y ≤</span>
+                        <input type="number" id="y-max" value="10" step="1">
+                    </div>
+                    <div class="range-buttons">
+                        <button id="zoom-in-y" class="range-btn">
+                            <i class="fas fa-search-minus"></i> Acercar Y
+                        </button>
+                        <button id="zoom-out-y" class="range-btn">
+                            <i class="fas fa-search-plus"></i> Alejar Y
+                        </button>
+                        <button id="reset-y" class="range-btn">
+                            <i class="fas fa-redo"></i> Resetear Y
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="graph-info">
+                    <i class="fas fa-info-circle"></i> Ajusta los rangos para explorar diferentes partes de la parábola
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const coeffA = document.getElementById('coeff-a');
+        const coeffB = document.getElementById('coeff-b');
+        const coeffC = document.getElementById('coeff-c');
+        const solveBtn = document.getElementById('solve-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const exampleBtn = document.getElementById('example-btn');
+        const equationDisplay = document.getElementById('equation');
+        const discriminantValue = document.getElementById('discriminant-value');
+        const discriminantDesc = document.getElementById('discriminant-desc');
+        const solution1 = document.getElementById('solution1');
+        const solution2 = document.getElementById('solution2');
+        const complexSolution = document.getElementById('complex-solution');
+        const graphPlaceholder = document.getElementById('graph-placeholder');
+        const graph = document.getElementById('graph');
+        
+        // Elementos para control de decimales
+        const decreaseDecimalsBtn = document.getElementById('decrease-decimals');
+        const increaseDecimalsBtn = document.getElementById('increase-decimals');
+        const decimalValueDisplay = document.getElementById('decimal-value');
+        const decimalText = document.getElementById('decimal-text');
+        const decimalInfo1 = document.getElementById('decimal-info');
+        const decimalInfo2 = document.getElementById('decimal-info2');
+        
+        // Elementos para control de rangos de gráfica
+        const xMinInput = document.getElementById('x-min');
+        const xMaxInput = document.getElementById('x-max');
+        const yMinInput = document.getElementById('y-min');
+        const yMaxInput = document.getElementById('y-max');
+        const zoomInXBtn = document.getElementById('zoom-in-x');
+        const zoomOutXBtn = document.getElementById('zoom-out-x');
+        const resetXBtn = document.getElementById('reset-x');
+        const zoomInYBtn = document.getElementById('zoom-in-y');
+        const zoomOutYBtn = document.getElementById('zoom-out-y');
+        const resetYBtn = document.getElementById('reset-y');
+
+        // Variables para almacenar valores
+        let currentSolutions = { x1: 2, x2: 1 };
+        let currentDiscriminant = 1;
+        let decimalPlaces = 2;
+        let currentCoefficients = { a: 1, b: -3, c: 2 };
+        
+        // Rangos iniciales de la gráfica
+        let xRange = { min: -5, max: 5 };
+        let yRange = { min: -10, max: 10 };
+        let defaultXRange = { min: -5, max: 5 };
+        let defaultYRange = { min: -10, max: 10 };
+
+        // Ejemplos de ecuaciones cuadráticas
+        const examples = [
+            {a: 1, b: -3, c: 2, desc: "x² - 3x + 2 = 0 (D > 0)"},
+            {a: 1, b: -2, c: 1, desc: "x² - 2x + 1 = 0 (D = 0)"},
+            {a: 1, b: 1, c: 1, desc: "x² + x + 1 = 0 (D < 0)"},
+            {a: 2, b: -4, c: -6, desc: "2x² - 4x - 6 = 0 (D > 0)"},
+            {a: 1, b: 0, c: -4, desc: "x² - 4 = 0 (D > 0)"},
+            {a: 1, b: 4, c: 4, desc: "x² + 4x + 4 = 0 (D = 0)"},
+            {a: 1, b: -5, c: 6, desc: "x² - 5x + 6 = 0 (D > 0)"},
+            {a: 1, b: -6, c: 9, desc: "x² - 6x + 9 = 0 (D = 0)"},
+            {a: 2, b: 3, c: 5, desc: "2x² + 3x + 5 = 0 (D < 0)"},
+            {a: -1, b: 4, c: -3, desc: "-x² + 4x - 3 = 0 (D > 0, parábola invertida)"}
+        ];
+
+        // Función para actualizar el control de decimales
+        function updateDecimalControls() {
+            decimalValueDisplay.textContent = decimalPlaces;
+            decimalText.textContent = `${decimalPlaces} decimal${decimalPlaces !== 1 ? 'es' : ''}`;
+            decimalInfo1.textContent = decimalPlaces;
+            decimalInfo2.textContent = decimalPlaces;
+            
+            // Habilitar/deshabilitar botones según límites
+            decreaseDecimalsBtn.disabled = decimalPlaces <= 0;
+            increaseDecimalsBtn.disabled = decimalPlaces >= 8;
+            
+            // Actualizar las soluciones con los nuevos decimales
+            updateSolutionDisplay();
+        }
+
+        // Función para actualizar los controles de rango
+        function updateRangeControls() {
+            xMinInput.value = xRange.min;
+            xMaxInput.value = xRange.max;
+            yMinInput.value = yRange.min;
+            yMaxInput.value = yRange.max;
+        }
+
+        // Función para formatear números con los decimales configurados
+        function formatNumber(num) {
+            if (decimalPlaces === 0) {
+                return Math.round(num).toString();
+            }
+            
+            const factor = Math.pow(10, decimalPlaces);
+            const rounded = Math.round(num * factor) / factor;
+            
+            // Formatear con el número correcto de decimales
+            return rounded.toFixed(decimalPlaces);
+        }
+
+        // Función para formatear números para la ecuación (sin decimales si son enteros)
+        function formatNumberForEquation(num) {
+            if (Math.abs(num - Math.round(num)) < 0.0001) {
+                return Math.round(num).toString();
+            }
+            
+            const factor = Math.pow(10, 2);
+            const rounded = Math.round(num * factor) / factor;
+            return rounded.toString();
+        }
+
+        // Función para actualizar la ecuación mostrada
+        function updateEquationDisplay(a, b, c) {
+            let equation = "";
+            
+            // Coeficiente a
+            if (a === 1) {
+                equation += "x²";
+            } else if (a === -1) {
+                equation += "-x²";
+            } else {
+                equation += `${formatNumberForEquation(a)}x²`;
+            }
+            
+            // Coeficiente b
+            if (b > 0) {
+                equation += ` + ${b === 1 ? "" : formatNumberForEquation(b)}x`;
+            } else if (b < 0) {
+                equation += ` - ${b === -1 ? "" : formatNumberForEquation(-b)}x`;
+            }
+            
+            // Coeficiente c
+            if (c > 0) {
+                equation += ` + ${formatNumberForEquation(c)}`;
+            } else if (c < 0) {
+                equation += ` - ${formatNumberForEquation(-c)}`;
+            }
+            
+            equation += " = 0";
+            
+            // Limpiar signos dobles
+            equation = equation.replace("+ -", "- ");
+            equationDisplay.textContent = equation;
+        }
+
+        // Función para actualizar la visualización de soluciones
+        function updateSolutionDisplay() {
+            if (currentDiscriminant >= 0) {
+                solution1.textContent = formatNumber(currentSolutions.x1);
+                solution2.textContent = formatNumber(currentSolutions.x2);
+            }
+        }
+
+        // Función para resolver la ecuación cuadrática
+        function solveQuadratic() {
+            // Obtener valores de los coeficientes
+            const a = parseFloat(coeffA.value) || 0;
+            const b = parseFloat(coeffB.value) || 0;
+            const c = parseFloat(coeffC.value) || 0;
+            
+            // Guardar coeficientes actuales
+            currentCoefficients = { a, b, c };
+            
+            // Actualizar la ecuación mostrada
+            updateEquationDisplay(a, b, c);
+            
+            // Calcular el discriminante
+            currentDiscriminant = b * b - 4 * a * c;
+            
+            // Mostrar el discriminante
+            discriminantValue.textContent = formatNumber(currentDiscriminant);
+            
+            // Determinar el tipo de discriminante
+            let discClass = "";
+            let discText = "";
+            
+            if (currentDiscriminant > 0) {
+                discClass = "discriminant-positive";
+                discText = "D > 0 → La ecuación tiene dos soluciones reales diferentes";
+            } else if (currentDiscriminant === 0) {
+                discClass = "discriminant-zero";
+                discText = "D = 0 → La ecuación tiene una solución real doble";
+            } else {
+                discClass = "discriminant-negative";
+                discText = "D < 0 → La ecuación tiene soluciones complejas conjugadas";
+            }
+            
+            discriminantValue.className = `discriminant-value ${discClass}`;
+            discriminantDesc.textContent = discText;
+            
+            // Calcular y mostrar soluciones según el discriminante
+            if (currentDiscriminant >= 0 && a !== 0) {
+                // Soluciones reales
+                const sqrtDiscriminant = Math.sqrt(currentDiscriminant);
+                currentSolutions.x1 = (-b + sqrtDiscriminant) / (2 * a);
+                currentSolutions.x2 = (-b - sqrtDiscriminant) / (2 * a);
+                
+                // Actualizar visualización con decimales actuales
+                updateSolutionDisplay();
+                
+                // Mostrar soluciones reales, ocultar mensaje complejo
+                document.querySelector('.
